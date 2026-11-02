@@ -40,5 +40,5 @@ LIMIT 1
 
 Code ausführen:
 C:\Users\Laura\IdeaProjects\Datenbanken\src
-javac -cp ".;postgresql-42.7.10.jar" CClient.java
-java -cp ".;postgresql-42.7.10.jar" CClient
+javac -cp ".;postgresql-42.7.10.jar" aufgabeEins.CClient.java
+java -cp ".;postgresql-42.7.10.jar" aufgabeEins.CClient
