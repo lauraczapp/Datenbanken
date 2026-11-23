@@ -1,0 +1,96 @@
+--- TEIL A ---
+
+A1: Finde die Anzahl der Städte pro Land.
+
+** Subquery **
+SELECT name AS "Land", (
+	SELECT count(name)
+	FROM city
+	where country.code=city.countrycode
+) AS "Städteanzahl"
+from country
+ORDER BY name ASC
+
+** JOIN **
+SELECT country.name AS "Land",COUNT(city.name) AS "Städteanzahl"
+FROM country JOIN city ON country.code = city.countrycode
+GROUP BY country.name
+ORDER BY country.name
+
+
+A2: Finde die Anzahl der kleinen Städte (Bevölkerungszahl geringer 10.000) pro Land.
+
+** Subquery **
+SELECT name AS "Land", (
+	SELECT count(name)
+	FROM city
+	where country.code=city.countrycode AND population < 10000
+) AS "Städteanzahl"
+from country
+ORDER BY name ASC
+
+** JOIN **
+SELECT country.name AS "Land",count(city.name) AS "Städteanzahl"
+FROM country LEFT JOIN city ON country.code = city.countrycode AND city.population < 10000
+GROUP BY country.name
+ORDER BY country.name
+
+A3: Auf welchem Kontinent befinden sich die Länder aus der Aufgabe A2? Erweitern Sie entsprechend die Abfrage A2.
+
+** Subquery **
+SELECT continent, name AS "Land",(
+	SELECT count(name)
+	FROM city
+	where country.code=city.countrycode AND population < 10000
+) AS "Städteanzahl"
+from country
+ORDER BY name ASC
+
+** JOIN **
+SELECT country.continent, country.name AS "Land",count(city.name) AS "Städteanzahl"
+FROM country LEFT JOIN city ON country.code = city.countrycode AND city.population < 10000
+GROUP BY country.name, country.continent
+ORDER BY country.name
+
+
+A4: Finde die Namen aller Länder, in denen es weder eine offizielle noch eine andere Sprache gibt.
+
+** Subquery **
+SELECT name AS "Land" from country
+WHERE NOT EXISTS(
+	select language
+	from countrylanguage
+	where countrylanguage.countrycode=country.code
+)
+
+** JOIN **
+SELECT country.name AS "Land"
+FROM country LEFT JOIN countrylanguage ON country.code = countrylanguage.countrycode
+WHERE countrylanguage IS NULL
+GROUP BY country.name
+
+A5: Finde heraus, welcher Staatschef für die meisten Länder verantwortlich ist und für wie viele.
+select headofstate,count(name) from country
+where headofstate IS NOT null and headofstate <> ''
+group by headofstate
+order by count desc
+
+A6: Was ist die meistgesprochene Sprache in dem Land mit der höchsten Lebenserwartung der Welt?
+** Subquery **
+select name, (
+	select language from countrylanguage
+	where countrylanguage.countrycode = country.code
+	order by percentage DESC
+	limit 1
+) from country
+where lifeexpectancy IS NOT null
+order by lifeexpectancy DESC
+limit 1
+
+A7: Wieviele Menschen sprechen die zehn Meistgesprochenen sprachen der Welt und welche Sprachen sind es?
+
+A8: Wie lautet der Name der Hauptstadt des Landes mit den meisten inoffziellen Sprachen?
+
+A9: Bearbeiten Sie die Abfrage A8 so dass es keine LIMIT bzw. ORDER BY Klausel beinhaltet.
+
+A10: Welches Land mit welcher Hauptstadt wurde zuerst unabhängig und in welchem Jahr geschah dies?
